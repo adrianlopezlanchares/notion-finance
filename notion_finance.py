@@ -283,6 +283,8 @@ def plot_pie_expense_comer(transactions: pd.DataFrame) -> Figure:
     category_expenses = category_expenses[category_expenses["amount"] < 0]
     category_expenses["amount"] = category_expenses["amount"].abs()
 
+    print(category_expenses.head())
+
     # Create pie chart
     fig, ax = plt.subplots()
     ax.pie(
