@@ -271,24 +271,6 @@ def deploy_streamlit() -> None:
     fig_pie = plot_last_months_category_expense_pie(df)
 
     #### Display Dashboard
-    st.markdown(
-        """
-        <style>
-        /* Make each column flex to its content, not wrap */
-        [data-testid="stHorizontalBlock"] {
-            display: flex;
-            flex-wrap: nowrap !important;
-            overflow-x: auto;            /* allow scrolling if too wide */
-        }
-        /* Let each column be as wide as it needs to be */
-        [data-testid="stColumn"] {
-            flex: 1 0 auto !important;
-            max-width: none !important;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
 
     # Display current money
     st.markdown("""### <strong>Dinero Total</strong>""", unsafe_allow_html=True)
