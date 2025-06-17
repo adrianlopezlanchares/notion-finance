@@ -31,7 +31,7 @@ def get_transactions() -> pd.DataFrame:
     response = notion.databases.query(database_id=database_id)
     rows = []
 
-    for page in response["results"]:
+    for page in response["results"]:  # type: ignore
         props = page["properties"]
         description = ""
         title_items = props["Description"]["title"]
@@ -138,15 +138,17 @@ def plot_ahorros(transactions: pd.DataFrame) -> Figure:
     return fig
 
 
-def plot_last_months_category_expense_pie(transactions: pd.DataFrame) -> Figure:
+def plot_last_months_category_expense_pie(
+    transactions: pd.DataFrame, transaction_type: str
+) -> Figure:
     """Plot a pie chart of the last month's transactions by category."""
     last_month = datetime.datetime.now() - pd.DateOffset(months=1)
     recent = transactions[transactions["date"] >= last_month]
 
-    total_expenses = abs(recent[recent["type"] == "Expense"]["amount"].sum())
+    total_expenses = abs(recent[recent["type"] == transaction_type]["amount"].sum())
 
     category_expenses = (
-        recent[recent["type"] == "Expense"]
+        recent[recent["type"] == transaction_type]
         .groupby("category")["amount"]
         .sum()
         .reset_index()
@@ -161,13 +163,13 @@ def plot_last_months_category_expense_pie(transactions: pd.DataFrame) -> Figure:
     )
 
     cmap = plt.get_cmap("Pastel1")
-    base_colors = cmap.colors
+    base_colors = cmap.colors  # type: ignore
     colors = [base_colors[i % len(base_colors)] for i in range(len(category_expenses))]
 
     fig, ax = plt.subplots()
     ax.pie(
         category_expenses["amount"],
-        labels=category_expenses["category"],
+        labels=category_expenses["category"],  # type: ignore
         startangle=90,
         colors=colors,
     )
@@ -186,17 +188,25 @@ def plot_last_months_category_expense_pie(transactions: pd.DataFrame) -> Figure:
     return fig
 
 
-def plot_pie_expense_comer(transactions: pd.DataFrame) -> Figure:
-    """Plot a pie chart of the last month's transactions by category for 'Comer'."""
+def plot_pie_expense_comer(transactions: pd.DataFrame, transaction_type: str) -> Figure:
+    """Plot a pie chart of the last month's transactions by category for 'Comer'.
+
+    Args:
+        transactions (pd.DataFrame): The transactions data.
+        transaction_type (str): The type of transactions to filter ('Expense' or 'Income').
+
+    Returns:
+        Figure: The matplotlib figure object.
+    """
     last_month = datetime.datetime.now() - pd.DateOffset(months=1)
     recent = transactions[
         (transactions["date"] >= last_month) & (transactions["category"].isin(COMER))
     ]
 
-    total_expenses = abs(recent[recent["type"] == "Expense"]["amount"].sum())
+    total_expenses = abs(recent[recent["type"] == transaction_type]["amount"].sum())
 
     category_expenses = (
-        recent[recent["type"] == "Expense"]
+        recent[recent["type"] == transaction_type]
         .groupby("category")["amount"]
         .sum()
         .reset_index()
@@ -211,13 +221,13 @@ def plot_pie_expense_comer(transactions: pd.DataFrame) -> Figure:
     )
 
     cmap = plt.get_cmap("Pastel2")
-    base_colors = cmap.colors
+    base_colors = cmap.colors  # type: ignore
     colors = [base_colors[i % len(base_colors)] for i in range(len(category_expenses))]
 
     fig, ax = plt.subplots()
     ax.pie(
         category_expenses["amount"],
-        labels=category_expenses["category"],
+        labels=category_expenses["category"],  # type: ignore
         startangle=90,
         colors=colors,
     )
@@ -330,8 +340,6 @@ def deploy_streamlit() -> None:
     # Generar figuras con los datos filtrados
     fig_total = plot_total_money(df_filtered)
     fig_ahorros = plot_ahorros(df_filtered)
-    fig_pie = plot_last_months_category_expense_pie(df_filtered)
-    fig_comer = plot_pie_expense_comer(df_filtered)
 
     # Mostrar gráficos
     col1, col2 = st.columns(2)
@@ -349,6 +357,20 @@ def deploy_streamlit() -> None:
         st.session_state.selected_graph = name
 
     st.subheader("Seleccionar Gráfico")
+
+    expenses_or_income = st.selectbox(
+        "Selecciona el tipo",
+        options=["Expense", "Income"],
+        index=0,
+    )
+
+    if expenses_or_income == "Income":
+        fig_pie = plot_last_months_category_expense_pie(df_filtered, "Income")
+        fig_comer = plot_pie_expense_comer(df_filtered, "Income")
+    else:
+        fig_pie = plot_last_months_category_expense_pie(df_filtered, "Expense")
+        fig_comer = plot_pie_expense_comer(df_filtered, "Expense")
+
     col1, col2, col3 = st.columns(3)
     with col1:
         st.button("Categorias", on_click=show_graph, args=("fig_pie",))
