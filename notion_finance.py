@@ -271,6 +271,13 @@ def deploy_streamlit() -> None:
     fig_pie = plot_last_months_category_expense_pie(df)
 
     #### Display Dashboard
+    # 1. Initialize session state for which graph to show
+    if "selected_graph" not in st.session_state:
+        st.session_state.selected_graph = "A"  # default graph
+
+    # 2. Define callbacks to switch graphs
+    def show_graph(name):
+        st.session_state.selected_graph = name
 
     # Display current money
     st.markdown("""### <strong>Dinero Total</strong>""", unsafe_allow_html=True)
@@ -356,7 +363,23 @@ def deploy_streamlit() -> None:
 
     # Display pie chart of last month's transactions by category
     st.subheader("Gastos del Último Mes por Categoría")
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.button("Expense Pie", on_click=show_graph, args=("A",))
+    with col2:
+        st.button("Show Graph B", on_click=show_graph, args=("B",))
+    with col3:
+        st.button("Show Graph C", on_click=show_graph, args=("C",))
     st.pyplot(fig_pie)
+
+    graph_map = {
+        "fig_pie": fig_pie,
+        "B": fig_total,
+        "C": fig_ahorros,
+    }
+
+    fig = graph_map[st.session_state.selected_graph]
+    st.pyplot(fig)
 
 
 ###############################################
