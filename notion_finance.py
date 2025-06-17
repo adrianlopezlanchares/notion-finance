@@ -365,7 +365,7 @@ def deploy_streamlit() -> None:
     st.subheader("Seleccionar Gráfico")
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.button("Expense Pie", on_click=show_graph, args=("A",))
+        st.button("Expense Pie", on_click=show_graph, args=("fig_pie",))
     with col2:
         st.button("Show Graph B", on_click=show_graph, args=("B",))
     with col3:
