@@ -22,7 +22,6 @@ notion = Client(auth=st.secrets["NOTION_API_KEY"])
 database_id = st.secrets["NOTION_DATABASE_ID"]
 
 
-@st.cache_data(ttl=600)
 def get_transactions() -> pd.DataFrame:
     """Retrieve transaction details from Notion database.
 
