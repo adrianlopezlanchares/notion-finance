@@ -9,6 +9,10 @@ import os
 import sys
 import subprocess
 
+
+COMER = {"uber eats", "comida", "monchis", "desayuno", "restaurante"}
+
+
 # If we’re not already running under Streamlit, re-invoke ourselves with `streamlit run`
 if __name__ == "__main__" and os.getenv("STREAMLIT_RUN") != "1":
     # mark that we are relaunching to avoid infinite loops
@@ -253,6 +257,45 @@ def plot_last_months_category_expense_pie(transactions: pd.DataFrame) -> Figure:
     return fig
 
 
+def plot_pie_expense_comer(transactions: pd.DataFrame) -> Figure:
+    """Plot a pie chart of the last month's transactions by category for 'Comer'.
+
+    Args:
+        transactions (pd.DataFrame): DataFrame containing transaction details.
+
+    Returns:
+        plt.Figure: A matplotlib figure object containing the pie chart.
+    """
+
+    # Filter transactions for the last month
+    last_month = datetime.datetime.now() - pd.DateOffset(months=1)
+    recent_transactions = transactions[
+        (transactions["date"] >= last_month) & (transactions["category"].isin(COMER))
+    ]
+
+    # Group expenses by category and sum amounts
+    category_expenses = (
+        recent_transactions[recent_transactions["type"] == "Expense"]
+        .groupby("category")["amount"]
+        .sum()
+        .reset_index()
+    )
+    category_expenses = category_expenses[category_expenses["amount"] < 0]
+    category_expenses["amount"] = category_expenses["amount"].abs()
+
+    # Create pie chart
+    fig, ax = plt.subplots()
+    ax.pie(
+        category_expenses["amount"],
+        labels=category_expenses["description"],  # type: ignore
+        startangle=90,
+    )
+    ax.axis("equal")  # Equal aspect ratio ensures that pie is drawn as a circle.
+    fig.tight_layout()  # Adjust layout to prevent clipping of pie chart
+
+    return fig
+
+
 def deploy_streamlit() -> None:
     """Deploy the Streamlit app to visualize transactions data."""
 
@@ -269,6 +312,7 @@ def deploy_streamlit() -> None:
     fig_total = plot_total_money(df)
     fig_ahorros = plot_ahorros(df)
     fig_pie = plot_last_months_category_expense_pie(df)
+    fig_comer = plot_pie_expense_comer(df)
 
     #### Display Dashboard
 
@@ -367,13 +411,13 @@ def deploy_streamlit() -> None:
     with col1:
         st.button("Expense Pie", on_click=show_graph, args=("fig_pie",))
     with col2:
-        st.button("Show Graph B", on_click=show_graph, args=("B",))
+        st.button("Comer Pie", on_click=show_graph, args=("fig_comer",))
     with col3:
         st.button("Show Graph C", on_click=show_graph, args=("C",))
 
     graph_map = {
         "fig_pie": fig_pie,
-        "B": fig_total,
+        "fig_comer": fig_comer,
         "C": fig_ahorros,
     }
 
