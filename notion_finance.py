@@ -273,6 +273,8 @@ def plot_pie_expense_comer(transactions: pd.DataFrame) -> Figure:
         (transactions["date"] >= last_month) & (transactions["category"].isin(COMER))
     ]
 
+    print(recent_transactions.head(20))
+
     # Create pie chart
     fig, ax = plt.subplots()
     ax.pie(
