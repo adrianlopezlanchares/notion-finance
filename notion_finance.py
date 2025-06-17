@@ -278,11 +278,53 @@ def deploy_streamlit() -> None:
 
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.write(f"{current_tarjeta:.2f} €", color="red")
+        tarjeta = f"{current_tarjeta:.2f} €"
+
+        st.markdown(
+            f"""
+            <div style="
+                border: 2px solid #4CAF50;
+                background-color: #FD4017;
+                padding: 12px;
+                border-radius: 6px;
+            ">
+            {tarjeta}
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
     with col2:
-        st.write(f"{current_efectivo:.2f} €", color="green")
+        efectivo = f"{current_efectivo:.2f} €"
+
+        st.markdown(
+            f"""
+            <div style="
+                border: 2px solid #4CAF50;
+                background-color: #17FD48;
+                padding: 12px;
+                border-radius: 6px;
+            ">
+            {efectivo}
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
     with col3:
-        st.write(f"{current_ahorros:.2f} €", color="blue")
+        ahorros = f"{current_ahorros:.2f} €"
+
+        st.markdown(
+            f"""
+            <div style="
+                border: 2px solid #4CAF50;
+                background-color: #17C5FD;
+                padding: 12px;
+                border-radius: 6px;
+            ">
+            {ahorros}
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
     st.header("Graficos")
 
