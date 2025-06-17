@@ -273,23 +273,11 @@ def plot_pie_expense_comer(transactions: pd.DataFrame) -> Figure:
         (transactions["date"] >= last_month) & (transactions["category"].isin(COMER))
     ]
 
-    # Group expenses by category and sum amounts
-    category_expenses = (
-        recent_transactions[recent_transactions["type"] == "Expense"]
-        .groupby("category")["amount"]
-        .sum()
-        .reset_index()
-    )
-    category_expenses = category_expenses[category_expenses["amount"] < 0]
-    category_expenses["amount"] = category_expenses["amount"].abs()
-
-    print(category_expenses.head())
-
     # Create pie chart
     fig, ax = plt.subplots()
     ax.pie(
-        category_expenses["amount"],
-        labels=category_expenses["description"],  # type: ignore
+        recent_transactions["amount"],
+        labels=recent_transactions["description"],  # type: ignore
         startangle=90,
     )
     ax.axis("equal")  # Equal aspect ratio ensures that pie is drawn as a circle.
