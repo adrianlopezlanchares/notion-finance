@@ -283,7 +283,7 @@ def deploy_streamlit() -> None:
         st.markdown(
             f"""
             <div style="
-                border: 2px solid #4CAF50;
+                border: 2px solid #FD4017;
                 background-color: #FD4017;
                 padding: 12px;
                 border-radius: 6px;
@@ -299,7 +299,7 @@ def deploy_streamlit() -> None:
         st.markdown(
             f"""
             <div style="
-                border: 2px solid #4CAF50;
+                border: 2px solid #47CC32;
                 background-color: #47CC32;
                 padding: 12px;
                 border-radius: 6px;
@@ -315,7 +315,7 @@ def deploy_streamlit() -> None:
         st.markdown(
             f"""
             <div style="
-                border: 2px solid #4CAF50;
+                border: 2px solid #17C5FD;
                 background-color: #17C5FD;
                 padding: 12px;
                 border-radius: 6px;
