@@ -273,21 +273,28 @@ def plot_pie_expense_comer(transactions: pd.DataFrame) -> Figure:
         (transactions["date"] >= last_month) & (transactions["category"].isin(COMER))
     ]
 
+    # Group expenses by category and sum amounts
+    category_expenses = (
+        recent_transactions[recent_transactions["type"] == "Expense"]
+        .groupby("category")["amount"]
+        .sum()
+        .reset_index()
+    )
+    category_expenses = category_expenses[category_expenses["amount"] < 0]
+    category_expenses["amount"] = category_expenses["amount"].abs()
+
     cmap = plt.get_cmap("Pastel2")
     base_colors = cmap.colors  # type: ignore
 
     # if you have more categories than colors in Set3, it will wrap around:
-    colors = [
-        base_colors[i % len(base_colors)] for i in range(len(recent_transactions))
-    ]
+    colors = [base_colors[i % len(base_colors)] for i in range(len(category_expenses))]
 
     # Create pie chart
     fig, ax = plt.subplots()
     ax.pie(
-        abs(recent_transactions["amount"]),
-        labels=recent_transactions["description"],  # type: ignore
+        category_expenses["amount"],
+        labels=category_expenses["category"],  # type: ignore
         startangle=90,
-        colors=colors,
     )
     ax.axis("equal")  # Equal aspect ratio ensures that pie is drawn as a circle.
     fig.tight_layout()  # Adjust layout to prevent clipping of pie chart
