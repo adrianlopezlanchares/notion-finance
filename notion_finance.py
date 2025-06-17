@@ -300,7 +300,7 @@ def deploy_streamlit() -> None:
             f"""
             <div style="
                 border: 2px solid #4CAF50;
-                background-color: #17FD48;
+                background-color: #47CC32;
                 padding: 12px;
                 border-radius: 6px;
             ">
