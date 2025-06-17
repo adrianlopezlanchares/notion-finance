@@ -362,10 +362,7 @@ def deploy_streamlit() -> None:
         "Selecciona el tipo",
         options=["Expense", "Income"],
         index=0,
-    )  # type: ignore
-
-    print(f"Selected type: {expenses_or_income}")
-    print("\n\n\n\n\n")
+    )
 
     if expenses_or_income == "Income":
         fig_pie = plot_category_pie(df_filtered, "Income")
