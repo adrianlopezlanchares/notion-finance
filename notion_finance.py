@@ -370,7 +370,6 @@ def deploy_streamlit() -> None:
         st.button("Show Graph B", on_click=show_graph, args=("B",))
     with col3:
         st.button("Show Graph C", on_click=show_graph, args=("C",))
-    st.pyplot(fig_pie)
 
     graph_map = {
         "fig_pie": fig_pie,
