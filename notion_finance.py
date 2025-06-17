@@ -274,7 +274,7 @@ def deploy_streamlit() -> None:
 
     # Display current money
     st.markdown("""### <strong>Dinero Total</strong>""", unsafe_allow_html=True)
-    total = f"{current_tarjeta:.2f} €"
+    total = f"{current_money:.2f} €"
 
     st.markdown(
         f"""
