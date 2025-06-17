@@ -362,7 +362,7 @@ def deploy_streamlit() -> None:
         st.pyplot(fig_ahorros)
 
     # Display pie chart of last month's transactions by category
-    st.subheader("Gastos del Último Mes por Categoría")
+    st.subheader("Seleccionar Gráfico")
     col1, col2, col3 = st.columns(3)
     with col1:
         st.button("Expense Pie", on_click=show_graph, args=("A",))
