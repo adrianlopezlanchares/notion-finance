@@ -273,7 +273,7 @@ def deploy_streamlit() -> None:
     #### Display Dashboard
 
     # Display current money
-    st.subheader("__Dinero Total__")
+    st.subheader("<strong>Dinero Total</strong>")
     total = f"{current_tarjeta:.2f} €"
 
     st.markdown(
@@ -284,7 +284,7 @@ def deploy_streamlit() -> None:
             padding: 12px;
             border-radius: 6px;
         ">
-        __{total}__
+        <strong>{total}</strong>
         </div>
         """,
         unsafe_allow_html=True,
@@ -292,7 +292,7 @@ def deploy_streamlit() -> None:
 
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.subheader("__Tarjeta__")
+        st.subheader("<strong>Tarjeta</strong>")
         tarjeta = f"{current_tarjeta:.2f} €"
 
         st.markdown(
@@ -303,13 +303,13 @@ def deploy_streamlit() -> None:
                 padding: 12px;
                 border-radius: 6px;
             ">
-            __{tarjeta}__
+            <strong>{tarjeta}</strong>
             </div>
             """,
             unsafe_allow_html=True,
         )
     with col2:
-        st.subheader("__Efectivo__")
+        st.subheader("<strong>Efectivo</strong>")
         efectivo = f"{current_efectivo:.2f} €"
 
         st.markdown(
@@ -320,13 +320,13 @@ def deploy_streamlit() -> None:
                 padding: 12px;
                 border-radius: 6px;
             ">
-           __{efectivo}__
+           <strong>{efectivo}</strong>
             </div>
             """,
             unsafe_allow_html=True,
         )
     with col3:
-        st.subheader("__Dinero Total__")
+        st.subheader("<strong>Dinero Total</strong>")
         ahorros = f"{current_ahorros:.2f} €"
 
         st.markdown(
@@ -337,7 +337,7 @@ def deploy_streamlit() -> None:
                 padding: 12px;
                 border-radius: 6px;
             ">
-            __{ahorros}__
+            <strong>{ahorros}</strong>
             </div>
             """,
             unsafe_allow_html=True,
