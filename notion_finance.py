@@ -140,15 +140,15 @@ def plot_ahorros(transactions: pd.DataFrame) -> Figure:
 
 def plot_category_pie(transactions: pd.DataFrame, transaction_type: str) -> Figure:
     """Plot a pie chart of the last month's transactions by category."""
-    last_month = datetime.datetime.now() - pd.DateOffset(months=1)
-    recent = transactions[transactions["date"] >= last_month]
 
     print(transactions.head())
 
-    total_expenses = abs(recent[recent["type"] == transaction_type]["amount"].sum())
+    total_expenses = abs(
+        transactions[transactions["type"] == transaction_type]["amount"].sum()
+    )
 
     category_expenses = (
-        recent[recent["type"] == transaction_type]
+        transactions[transactions["type"] == transaction_type]
         .groupby("category")["amount"]
         .sum()
         .reset_index()
@@ -198,10 +198,7 @@ def plot_pie_expense_comer(transactions: pd.DataFrame, transaction_type: str) ->
     Returns:
         Figure: The matplotlib figure object.
     """
-    last_month = datetime.datetime.now() - pd.DateOffset(months=1)
-    recent = transactions[
-        (transactions["date"] >= last_month) & (transactions["category"].isin(COMER))
-    ]
+    recent = transactions[(transactions["category"].isin(COMER))]
 
     total_expenses = abs(recent[recent["type"] == transaction_type]["amount"].sum())
 
