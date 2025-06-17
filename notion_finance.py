@@ -273,15 +273,16 @@ def deploy_streamlit() -> None:
     #### Display Dashboard
 
     # Display current money
-    st.metric("Dinero Total", f"{current_money:.2f} €", delta_color="normal")
+    st.subheader("Dinero Total")
+    st.write(f"{current_money:.2f} €", color="green" if current_money >= 0 else "red")
 
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.metric("Tarjeta", f"{current_tarjeta:.2f} €", delta_color="inverse")
+        st.write(f"{current_tarjeta:.2f} €", color="red")
     with col2:
-        st.metric("Efectivo", f"{current_efectivo:.2f} €", delta_color="normal")
+        st.write(f"{current_efectivo:.2f} €", color="green")
     with col3:
-        st.metric("Ahorros", f"{current_ahorros:.2f} €", delta_color="normal")
+        st.write(f"{current_ahorros:.2f} €", color="blue")
 
     st.header("Graficos")
 
