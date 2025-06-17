@@ -208,7 +208,10 @@ def plot_pie_expense_comer(transactions: pd.DataFrame, transaction_type: str) ->
         .sum()
         .reset_index()
     )
-    category_expenses = category_expenses[category_expenses["amount"] < 0]
+    if transaction_type == "Income":
+        category_expenses = category_expenses[category_expenses["amount"] > 0]
+    else:
+        category_expenses = category_expenses[category_expenses["amount"] < 0]
     category_expenses["amount"] = category_expenses["amount"].abs()
     category_expenses["category"] = (
         category_expenses["category"]
