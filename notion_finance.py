@@ -273,11 +273,26 @@ def deploy_streamlit() -> None:
     #### Display Dashboard
 
     # Display current money
-    st.subheader("Dinero Total")
-    st.write(f"{current_money:.2f} €", color="green" if current_money >= 0 else "red")
+    st.subheader("**Dinero Total**")
+    total = f"{current_tarjeta:.2f} €"
+
+    st.markdown(
+        f"""
+        <div style="
+            border: 2px solid #47CC32;
+            background-color: #47CC32;
+            padding: 12px;
+            border-radius: 6px;
+        ">
+        **{total}**
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
     col1, col2, col3 = st.columns(3)
     with col1:
+        st.subheader("**Tarjeta**")
         tarjeta = f"{current_tarjeta:.2f} €"
 
         st.markdown(
@@ -288,12 +303,13 @@ def deploy_streamlit() -> None:
                 padding: 12px;
                 border-radius: 6px;
             ">
-            {tarjeta}
+            **{tarjeta}**
             </div>
             """,
             unsafe_allow_html=True,
         )
     with col2:
+        st.subheader("**Efectivo**")
         efectivo = f"{current_efectivo:.2f} €"
 
         st.markdown(
@@ -304,12 +320,13 @@ def deploy_streamlit() -> None:
                 padding: 12px;
                 border-radius: 6px;
             ">
-            {efectivo}
+           **{efectivo}**
             </div>
             """,
             unsafe_allow_html=True,
         )
     with col3:
+        st.subheader("**Ahorros**")
         ahorros = f"{current_ahorros:.2f} €"
 
         st.markdown(
@@ -320,7 +337,7 @@ def deploy_streamlit() -> None:
                 padding: 12px;
                 border-radius: 6px;
             ">
-            {ahorros}
+            **{ahorros}**
             </div>
             """,
             unsafe_allow_html=True,
