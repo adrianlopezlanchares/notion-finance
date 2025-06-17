@@ -141,8 +141,6 @@ def plot_ahorros(transactions: pd.DataFrame) -> Figure:
 def plot_category_pie(transactions: pd.DataFrame, transaction_type: str) -> Figure:
     """Plot a pie chart of the last month's transactions by category."""
 
-    print(transactions.head())
-
     total_expenses = abs(
         transactions[transactions["type"] == transaction_type]["amount"].sum()
     )
@@ -364,7 +362,6 @@ def deploy_streamlit() -> None:
         "Selecciona el tipo",
         options=["Expense", "Income"],
         index=0,
-        default="Expense",
     )  # type: ignore
 
     print(f"Selected type: {expenses_or_income}")
