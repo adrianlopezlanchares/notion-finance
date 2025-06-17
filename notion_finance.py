@@ -295,6 +295,7 @@ def plot_pie_expense_comer(transactions: pd.DataFrame) -> Figure:
         category_expenses["amount"],
         labels=category_expenses["category"],  # type: ignore
         startangle=90,
+        colors=colors,
     )
     ax.axis("equal")  # Equal aspect ratio ensures that pie is drawn as a circle.
     fig.tight_layout()  # Adjust layout to prevent clipping of pie chart
