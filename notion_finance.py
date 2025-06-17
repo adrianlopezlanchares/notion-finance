@@ -273,7 +273,7 @@ def deploy_streamlit() -> None:
     #### Display Dashboard
 
     # Display current money
-    st.subheader("<strong>Dinero Total</strong>")
+    st.markdown("### <strong>Dinero Total</strong>")
     total = f"{current_tarjeta:.2f} €"
 
     st.markdown(
@@ -292,7 +292,7 @@ def deploy_streamlit() -> None:
 
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.subheader("<strong>Tarjeta</strong>")
+        st.markdown("### <strong>Tarjeta</strong>")
         tarjeta = f"{current_tarjeta:.2f} €"
 
         st.markdown(
@@ -309,7 +309,7 @@ def deploy_streamlit() -> None:
             unsafe_allow_html=True,
         )
     with col2:
-        st.subheader("<strong>Efectivo</strong>")
+        st.markdown("### <strong>Efectivo</strong>")
         efectivo = f"{current_efectivo:.2f} €"
 
         st.markdown(
@@ -326,7 +326,7 @@ def deploy_streamlit() -> None:
             unsafe_allow_html=True,
         )
     with col3:
-        st.subheader("<strong>Dinero Total</strong>")
+        st.markdown("### <strong>Ahorros</strong>")
         ahorros = f"{current_ahorros:.2f} €"
 
         st.markdown(
