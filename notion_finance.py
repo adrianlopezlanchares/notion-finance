@@ -278,7 +278,7 @@ def plot_pie_expense_comer(transactions: pd.DataFrame) -> Figure:
     # Create pie chart
     fig, ax = plt.subplots()
     ax.pie(
-        recent_transactions["amount"],
+        abs(recent_transactions["amount"]),
         labels=recent_transactions["description"],  # type: ignore
         startangle=90,
     )
