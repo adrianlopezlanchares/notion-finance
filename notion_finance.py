@@ -259,7 +259,6 @@ def deploy_streamlit() -> None:
 
     # add button to reboot streamlit cloud app
     if st.button("Refresh"):
-        os.environ["STREAMLIT_RUN"] = "0"
         st.rerun()
 
     st.title("Dashboard")
