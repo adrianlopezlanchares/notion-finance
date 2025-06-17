@@ -257,6 +257,11 @@ def plot_last_months_category_expense_pie(transactions: pd.DataFrame) -> Figure:
 def deploy_streamlit() -> None:
     """Deploy the Streamlit app to visualize transactions data."""
 
+    # add button to reboot streamlit cloud app
+    if st.button("Refresh"):
+        os.environ["STREAMLIT_RUN"] = "0"
+        st.rerun()
+
     st.title("Dashboard")
     df = get_transactions()
 
