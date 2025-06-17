@@ -359,7 +359,8 @@ def deploy_streamlit() -> None:
         "Selecciona el tipo",
         options=["Expense", "Income"],
         index=0,
-    )
+        default="Expense",
+    )  # type: ignore
 
     print(f"Selected type: {expenses_or_income}")
     print("\n\n\n\n\n")
