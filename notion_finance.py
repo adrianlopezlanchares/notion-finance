@@ -78,7 +78,7 @@ def get_transactions() -> pd.DataFrame:
 
 def get_current_money(
     transactions: pd.DataFrame,
-) -> tuple[pd.DataFrame, float, float, float, float]:
+) -> tuple[float, float, float, float]:
     """Calculate the current total money based on transactions."""
     transactions["amount_no_ahorros"] = transactions["amount"]
     transactions["tarjeta"] = transactions["amount"]
@@ -94,9 +94,9 @@ def get_current_money(
     current_tarjeta = transactions["tarjeta"].sum()
     current_efectivo = transactions["efectivo"].sum()
     current_ahorros = transactions["ahorros"].sum()
+    current_tarjeta -= current_ahorros
 
     return (
-        transactions,
         current_money,
         current_tarjeta,
         current_efectivo,
@@ -264,10 +264,9 @@ def deploy_streamlit() -> None:
     df = get_transactions()
 
     # Mostrar saldos actuales
-    transactions, current_money, current_tarjeta, current_efectivo, current_ahorros = (
+    current_money, current_tarjeta, current_efectivo, current_ahorros = (
         get_current_money(df)
     )
-    st.header(f"{transactions['tarjeta'].head(50)}")
     st.markdown("### <strong>Dinero Total</strong>", unsafe_allow_html=True)
     st.markdown(
         f"""
