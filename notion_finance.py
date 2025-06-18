@@ -267,7 +267,7 @@ def deploy_streamlit() -> None:
     transactions, current_money, current_tarjeta, current_efectivo, current_ahorros = (
         get_current_money(df)
     )
-    st.header(f"{transactions.head(20)}")
+    st.header(f"{transactions['tarjeta'].head(50)}")
     st.markdown("### <strong>Dinero Total</strong>", unsafe_allow_html=True)
     st.markdown(
         f"""
