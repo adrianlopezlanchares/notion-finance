@@ -108,6 +108,7 @@ def plot_total_money(transactions: pd.DataFrame) -> Figure:
     """Plot the total money over time."""
     fig, ax = plt.subplots()
     transactions = transactions.copy()
+    transactions["amount"] += transactions["amount"][0]
     transactions["amount_no_ahorros"] = transactions["amount"]
     transactions.loc[transactions["type"] == "Ahorros", "amount_no_ahorros"] = 0
     transactions["accumulated"] = transactions["amount_no_ahorros"].cumsum()
@@ -127,6 +128,7 @@ def plot_ahorros(transactions: pd.DataFrame) -> Figure:
     """Plot the total money in Ahorros over time."""
     fig, ax = plt.subplots()
     transactions = transactions.copy()
+    transactions["amount"] += transactions["amount"][0]
     transactions["amount_ahorros"] = transactions["amount"]
     transactions.loc[transactions["type"] != "Ahorros", "amount_ahorros"] = 0
     transactions = transactions[transactions["amount_ahorros"] != 0]
