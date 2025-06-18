@@ -89,9 +89,9 @@ def get_current_money(transactions: pd.DataFrame) -> tuple[float, float, float, 
     transactions.loc[transactions["account"] != "Ahorros", "ahorros"] = 0
 
     current_money = transactions["amount_no_ahorros"].sum()
+    current_tarjeta = transactions["tarjeta"].sum()
     current_efectivo = transactions["efectivo"].sum()
     current_ahorros = transactions["ahorros"].sum()
-    current_tarjeta = current_money - current_efectivo - current_ahorros
 
     return current_money, current_tarjeta, current_efectivo, current_ahorros
 
