@@ -104,7 +104,7 @@ def get_current_money(
     )
 
 
-def plot_total_money(transactions: pd.DataFrame) -> Figure:
+def plot_total_money(transactions: pd.DataFrame, time_range: str) -> Figure:
     """Plot the total money over time."""
     fig, ax = plt.subplots()
     transactions = transactions.copy()
@@ -112,8 +112,24 @@ def plot_total_money(transactions: pd.DataFrame) -> Figure:
     transactions.loc[transactions["type"] == "Ahorros", "amount_no_ahorros"] = 0
     transactions["accumulated"] = transactions["amount_no_ahorros"].cumsum()
 
+    # Filtrar datos según el rango seleccionado
+    transactions_filtered = transactions.copy()
+    if time_range == "Último mes":
+        start_date = datetime.datetime.now() - pd.DateOffset(months=1)
+        transactions_filtered = transactions_filtered[
+            transactions_filtered["date"] >= start_date
+        ]
+    elif time_range == "Última semana":
+        start_date = datetime.datetime.now() - pd.DateOffset(weeks=1)
+        transactions_filtered = transactions_filtered[
+            transactions_filtered["date"] >= start_date
+        ]
+
     ax.plot(
-        transactions["date"], transactions["accumulated"], marker="o", linestyle="-"
+        transactions_filtered["date"],
+        transactions_filtered["accumulated"],
+        marker="o",
+        linestyle="-",
     )
     ax.set_xlabel("Date")
     ax.set_ylabel("Euros (€)")
@@ -123,7 +139,7 @@ def plot_total_money(transactions: pd.DataFrame) -> Figure:
     return fig
 
 
-def plot_ahorros(transactions: pd.DataFrame) -> Figure:
+def plot_ahorros(transactions: pd.DataFrame, time_range: str) -> Figure:
     """Plot the total money in Ahorros over time."""
     fig, ax = plt.subplots()
     transactions = transactions.copy()
@@ -132,9 +148,22 @@ def plot_ahorros(transactions: pd.DataFrame) -> Figure:
     transactions = transactions[transactions["amount_ahorros"] != 0]
     transactions["accumulated_ahorros"] = transactions["amount_ahorros"].cumsum()
 
+    # Filtrar datos según el rango seleccionado
+    transactions_filtered = transactions.copy()
+    if time_range == "Último mes":
+        start_date = datetime.datetime.now() - pd.DateOffset(months=1)
+        transactions_filtered = transactions_filtered[
+            transactions_filtered["date"] >= start_date
+        ]
+    elif time_range == "Última semana":
+        start_date = datetime.datetime.now() - pd.DateOffset(weeks=1)
+        transactions_filtered = transactions_filtered[
+            transactions_filtered["date"] >= start_date
+        ]
+
     ax.plot(
-        transactions["date"],
-        transactions["accumulated_ahorros"],
+        transactions_filtered["date"],
+        transactions_filtered["accumulated_ahorros"],
         marker="o",
         linestyle="-",
     )
@@ -337,18 +366,9 @@ def deploy_streamlit() -> None:
         index=0,
     )
 
-    # Filtrar datos según el rango seleccionado
-    df_filtered = df.copy()
-    if time_range == "Último mes":
-        start_date = datetime.datetime.now() - pd.DateOffset(months=1)
-        df_filtered = df_filtered[df_filtered["date"] >= start_date]
-    elif time_range == "Última semana":
-        start_date = datetime.datetime.now() - pd.DateOffset(weeks=1)
-        df_filtered = df_filtered[df_filtered["date"] >= start_date]
-
     # Generar figuras con los datos filtrados
-    fig_total = plot_total_money(df_filtered)
-    fig_ahorros = plot_ahorros(df_filtered)
+    fig_total = plot_total_money(df, time_range)
+    fig_ahorros = plot_ahorros(df, time_range)
 
     # Mostrar gráficos
     col1, col2 = st.columns(2)
@@ -372,6 +392,15 @@ def deploy_streamlit() -> None:
         options=["Expense", "Income"],
         index=0,
     )
+
+    # Filtrar datos según el rango seleccionado
+    df_filtered = df.copy()
+    if time_range == "Último mes":
+        start_date = datetime.datetime.now() - pd.DateOffset(months=1)
+        df_filtered = df_filtered[df_filtered["date"] >= start_date]
+    elif time_range == "Última semana":
+        start_date = datetime.datetime.now() - pd.DateOffset(weeks=1)
+        df_filtered = df_filtered[df_filtered["date"] >= start_date]
 
     if expenses_or_income == "Income":
         fig_pie = plot_category_pie(df_filtered, "Income")
