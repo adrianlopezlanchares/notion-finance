@@ -182,7 +182,9 @@ def plot_category_pie(transactions: pd.DataFrame, transaction_type: str) -> Figu
         transactions[transactions["type"] == transaction_type]["amount"].sum()
     )
 
-    transactions["general_category"] = transactions["category"].isin(COMER)
+    # Add all transactions to have category in 'COMER' as one single transaction
+    transactions["general_category"] = transactions["category"]
+    transactions.loc[transactions["category"].isin(COMER), "general_category"] = "Comer"
 
     category_expenses = (
         transactions[transactions["type"] == transaction_type]
