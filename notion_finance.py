@@ -182,9 +182,11 @@ def plot_category_pie(transactions: pd.DataFrame, transaction_type: str) -> Figu
         transactions[transactions["type"] == transaction_type]["amount"].sum()
     )
 
+    transactions["general_category"] = transactions["category"].isin(COMER)
+
     category_expenses = (
         transactions[transactions["type"] == transaction_type]
-        .groupby("category")["amount"]
+        .groupby("general_category")["amount"]
         .sum()
         .reset_index()
     )
@@ -194,7 +196,7 @@ def plot_category_pie(transactions: pd.DataFrame, transaction_type: str) -> Figu
         category_expenses = category_expenses[category_expenses["amount"] < 0]
         category_expenses["amount"] = category_expenses["amount"].abs()
     category_expenses["category"] = (
-        category_expenses["category"]
+        category_expenses["general_category"]
         + " ("
         + category_expenses["amount"].astype(str)
         + " €)"
@@ -207,7 +209,7 @@ def plot_category_pie(transactions: pd.DataFrame, transaction_type: str) -> Figu
     fig, ax = plt.subplots()
     ax.pie(
         category_expenses["amount"],
-        labels=category_expenses["category"],  # type: ignore
+        labels=category_expenses["general_category"],  # type: ignore
         startangle=90,
         colors=colors,
     )
