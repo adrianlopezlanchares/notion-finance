@@ -197,7 +197,7 @@ def plot_category_pie(transactions: pd.DataFrame, transaction_type: str) -> Figu
     else:
         category_expenses = category_expenses[category_expenses["amount"] < 0]
         category_expenses["amount"] = category_expenses["amount"].abs()
-    category_expenses["category"] = (
+    category_expenses["general_category"] = (
         category_expenses["general_category"]
         + " ("
         + category_expenses["amount"].astype(str)
