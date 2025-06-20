@@ -197,7 +197,12 @@ def plot_category_pie(transactions: pd.DataFrame, transaction_type: str) -> Figu
     else:
         category_expenses = category_expenses[category_expenses["amount"] < 0]
         category_expenses["amount"] = category_expenses["amount"].abs()
-    category_expenses["general_category"] = f"{category_expenses['general_category']} ({category_expenses['amount']:.2f} €)"  # type: ignore
+    category_expenses["general_category"] = (
+        category_expenses["general_category"]
+        + " ("
+        + round(float(category_expenses["amount"]), 2)  # type: ignore
+        + " €)"
+    )
 
     cmap = plt.get_cmap("Pastel1")
     base_colors = cmap.colors  # type: ignore
@@ -253,7 +258,7 @@ def plot_pie_expense_comer(transactions: pd.DataFrame, transaction_type: str) ->
     category_expenses["category"] = (
         category_expenses["category"]
         + " ("
-        + category_expenses["amount"].astype(str)
+        + round(float(category_expenses["amount"]), 2)  # type: ignore
         + " €)"
     )
 
