@@ -200,8 +200,7 @@ def plot_category_pie(transactions: pd.DataFrame, transaction_type: str) -> Figu
     category_expenses["general_category"] = (
         category_expenses["general_category"]
         + " ("
-        + category_expenses["amount"].astype(str)
-        + " €)"
+        + f"{category_expenses["amount"]:.2f} €)" # type: ignore
     )
 
     cmap = plt.get_cmap("Pastel1")
