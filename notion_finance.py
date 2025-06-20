@@ -214,9 +214,6 @@ def plot_category_pie(transactions: pd.DataFrame, transaction_type: str) -> Figu
         labels=category_expenses["general_category"],  # type: ignore
         startangle=90,
         colors=colors,
-        wedgeprops={"edgecolor": "white", "linewidth": 1},
-        autopct="%1.1f%%",
-        pctdistance=0.85,
     )
     ax.text(
         0,
@@ -275,9 +272,6 @@ def plot_pie_expense_comer(transactions: pd.DataFrame, transaction_type: str) ->
         labels=category_expenses["category"],  # type: ignore
         startangle=90,
         colors=colors,
-        wedgeprops={"edgecolor": "white", "linewidth": 1},
-        autopct="%1.1f%%",
-        pctdistance=0.85,
     )
     ax.text(
         0,
