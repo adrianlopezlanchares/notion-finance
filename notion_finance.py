@@ -200,7 +200,7 @@ def plot_category_pie(transactions: pd.DataFrame, transaction_type: str) -> Figu
     category_expenses["general_category"] = (
         category_expenses["general_category"]
         + " ("
-        + round(float(category_expenses["amount"]), 2)  # type: ignore
+        + category_expenses["amount"].apply(lambda x: f"{x:.2f} €").astype(str)
         + " €)"
     )
 
@@ -258,7 +258,7 @@ def plot_pie_expense_comer(transactions: pd.DataFrame, transaction_type: str) ->
     category_expenses["category"] = (
         category_expenses["category"]
         + " ("
-        + round(float(category_expenses["amount"]), 2)  # type: ignore
+        + category_expenses["amount"].apply(lambda x: f"{x:.2f} €").astype(str)
         + " €)"
     )
 
