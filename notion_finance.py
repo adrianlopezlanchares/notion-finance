@@ -111,6 +111,7 @@ def plot_total_money(transactions: pd.DataFrame, time_range: str) -> Figure:
     transactions["amount_no_ahorros"] = transactions["amount"]
     transactions.loc[transactions["type"] == "Ahorros", "amount_no_ahorros"] = 0
     transactions["accumulated"] = transactions["amount_no_ahorros"].cumsum()
+    transactions = transactions[transactions["amount_no_ahorros"] != 0]
 
     # Filtrar datos según el rango seleccionado
     transactions_filtered = transactions.copy()
