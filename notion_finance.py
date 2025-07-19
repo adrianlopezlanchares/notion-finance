@@ -317,7 +317,7 @@ def deploy_streamlit() -> None:
     )
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.markdown("### <strong>Tarjeta</strong>", unsafe_allow_html=True)
+        st.markdown("### <strong>Tarjetaaaaa</strong>", unsafe_allow_html=True)
         st.markdown(
             f"""
             <div style="
