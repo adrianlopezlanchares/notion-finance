@@ -141,6 +141,7 @@ def plot_total_money(transactions: pd.DataFrame, time_range: str) -> Figure:
         transactions_filtered["date"],
         transactions_filtered["accumulated"],
         marker="o",
+        markersize=1
         linestyle="-",
     )
     ax.set_xlabel("Date")
@@ -177,6 +178,7 @@ def plot_ahorros(transactions: pd.DataFrame, time_range: str) -> Figure:
         transactions_filtered["date"],
         transactions_filtered["accumulated_ahorros"],
         marker="o",
+        markersize=1,
         linestyle="-",
     )
     ax.set_xlabel("Date")
