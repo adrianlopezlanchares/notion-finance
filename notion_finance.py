@@ -381,7 +381,7 @@ def deploy_streamlit() -> None:
     time_range = st.selectbox(
         "Selecciona el rango de tiempo",
         options=["Todo", "Último mes", "Última semana"],
-        index=0,
+        index=1,
     )
 
     # Generar figuras con los datos filtrados
