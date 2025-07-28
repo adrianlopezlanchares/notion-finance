@@ -28,10 +28,21 @@ database_id = st.secrets["NOTION_DATABASE_ID"]
 
 def get_transactions() -> pd.DataFrame:
     """Retrieve transaction details from Notion database."""
-    response = notion.databases.query(database_id=database_id)
+
+    response = notion.databases.query(database_id=database_id, page_size=100)
+    cursor = response["next_cursor"]
+    response_results = response["results"]
+
+    while response["has_more"]:
+        response = notion.databases.query(
+            database_id=database_id, page_size=100, start_cursor=cursor
+        )
+        cursor = response["next_cursor"]
+        response_results += response["results"]
+
     rows = []
 
-    for page in response["results"]:  # type: ignore
+    for page in response_results:  # type: ignore
         props = page["properties"]
         description = ""
         title_items = props["Description"]["title"]
