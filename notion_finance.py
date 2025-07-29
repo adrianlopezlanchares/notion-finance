@@ -302,17 +302,17 @@ def plot_pie_expense_comer(transactions: pd.DataFrame, transaction_type: str) ->
     return fig
 
 
-def deploy_streamlit() -> None:
-    """Deploy the Streamlit app to visualize transactions data."""
-    if st.button("Refresh"):
-        st.rerun()
+def dashboard(transactions: pd.DataFrame) -> None:
+    """Display the dashboard with current money and graphs.
 
+    Args:
+        transactions (pd.DataFrame): The transactions data.
+    """
     st.title("Dashboard")
-    df = get_transactions()
 
     # Mostrar saldos actuales
     current_money, current_tarjeta, current_efectivo, current_ahorros = (
-        get_current_money(df)
+        get_current_money(transactions)
     )
     st.markdown("### <strong>Dinero Total</strong>", unsafe_allow_html=True)
     st.markdown(
@@ -385,8 +385,8 @@ def deploy_streamlit() -> None:
     )
 
     # Generar figuras con los datos filtrados
-    fig_total = plot_total_money(df, time_range)
-    fig_ahorros = plot_ahorros(df, time_range)
+    fig_total = plot_total_money(transactions, time_range)
+    fig_ahorros = plot_ahorros(transactions, time_range)
 
     # Mostrar gráficos
     col1, col2 = st.columns(2)
@@ -412,7 +412,7 @@ def deploy_streamlit() -> None:
     )
 
     # Filtrar datos según el rango seleccionado
-    df_filtered = df.copy()
+    df_filtered = transactions.copy()
     if time_range == "Último mes":
         start_date = datetime.datetime.now() - pd.DateOffset(months=1)
         df_filtered = df_filtered[df_filtered["date"] >= start_date]
@@ -442,6 +442,22 @@ def deploy_streamlit() -> None:
     }
 
     st.pyplot(graph_map[st.session_state.selected_graph])
+
+
+def deploy_streamlit() -> None:
+    """Deploy the Streamlit app to visualize transactions data."""
+    if st.button("Refresh"):
+        st.rerun()
+
+    df = get_transactions()
+
+    tab1, tab2 = st.tabs(["Dashboard", "Transactions"])
+
+    with tab1:
+        dashboard(df)
+
+    with tab2:
+        pass
 
 
 ###############################################
