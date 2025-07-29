@@ -12,6 +12,9 @@ import subprocess
 
 COMER = {"uber eats", "comida", "monchis", "desayuno", "restaurante"}
 
+notion = Client(auth=st.secrets["NOTION_API_KEY"])
+database_id = st.secrets["NOTION_DATABASE_ID"]
+
 
 # If we’re not already running under Streamlit, re-invoke ourselves with `streamlit run`
 if __name__ == "__main__" and os.getenv("STREAMLIT_RUN") != "1":
@@ -20,10 +23,6 @@ if __name__ == "__main__" and os.getenv("STREAMLIT_RUN") != "1":
     # build the command: streamlit run this_script.py [any args]
     cmd = ["streamlit", "run", sys.argv[0]] + sys.argv[1:]
     sys.exit(subprocess.call(cmd))
-
-
-notion = Client(auth=st.secrets["NOTION_API_KEY"])
-database_id = st.secrets["NOTION_DATABASE_ID"]
 
 
 def get_transactions() -> pd.DataFrame:
@@ -90,7 +89,15 @@ def get_transactions() -> pd.DataFrame:
 def get_current_money(
     transactions: pd.DataFrame,
 ) -> tuple[float, float, float, float]:
-    """Calculate the current total money based on transactions."""
+    """Calculate the current total money based on transactions.
+
+    Args:
+        transactions (pd.DataFrame): DataFrame containing transaction data.
+
+    Returns:
+        tuple[float, float, float, float]: Current total money, tarjeta, efectivo, and ahorros.
+    """
+
     transactions["amount_no_ahorros"] = transactions["amount"]
     transactions["tarjeta"] = transactions["amount"]
     transactions["efectivo"] = transactions["amount"]
@@ -116,7 +123,16 @@ def get_current_money(
 
 
 def plot_total_money(transactions: pd.DataFrame, time_range: str) -> Figure:
-    """Plot the total money over time."""
+    """Plot the total money over time.
+
+    Args:
+        transactions (pd.DataFrame): DataFrame containing transaction data.
+        time_range (str): Time range for the plot (e.g., "Último mes", "Última semana").
+
+    Returns:
+        Figure: Matplotlib figure object.
+    """
+
     fig, ax = plt.subplots()
     transactions = transactions.copy()
     transactions["amount_no_ahorros"] = transactions["amount"]
@@ -153,7 +169,16 @@ def plot_total_money(transactions: pd.DataFrame, time_range: str) -> Figure:
 
 
 def plot_ahorros(transactions: pd.DataFrame, time_range: str) -> Figure:
-    """Plot the total money in Ahorros over time."""
+    """Plot the total money in Ahorros over time.
+
+    Args:
+        transactions (pd.DataFrame): DataFrame containing transaction data.
+        time_range (str): Time range for the plot (e.g., "Último mes", "Última semana").
+
+    Returns:
+        Figure: Matplotlib figure object.
+    """
+
     fig, ax = plt.subplots()
     transactions = transactions.copy()
     transactions["amount_ahorros"] = transactions["amount"]
@@ -190,7 +215,15 @@ def plot_ahorros(transactions: pd.DataFrame, time_range: str) -> Figure:
 
 
 def plot_category_pie(transactions: pd.DataFrame, transaction_type: str) -> Figure:
-    """Plot a pie chart of the last month's transactions by category."""
+    """Plot a pie chart of transactions by category.
+
+    Args:
+        transactions (pd.DataFrame): The transactions data.
+        transaction_type (str): The type of transactions to filter ('Expense' or 'Income').
+
+    Returns:
+        Figure: The matplotlib figure object.
+    """
 
     total_expenses = abs(
         transactions[transactions["type"] == transaction_type]["amount"].sum()
@@ -444,6 +477,52 @@ def dashboard(transactions: pd.DataFrame) -> None:
     st.pyplot(graph_map[st.session_state.selected_graph])
 
 
+def list_transactions(transactions: pd.DataFrame) -> None:
+    """List all transactions in a table format.
+
+    Args:
+        transactions (pd.DataFrame): The transactions data.
+    """
+    st.subheader("Lista")
+    transactions_list = transactions.copy()
+
+    transactions_list["date"] = transactions_list["date"].dt.strftime("%d-%m-%Y")
+
+    transactions_list = transactions_list.iloc[::-1]
+
+    # st.dataframe(transactions_list, use_container_width=True)
+
+    for i, row in transactions_list.iterrows():
+        color = "#76C869" if row["type"] == "Income" else "#FA8970"
+        color = "#6CA9F9" if row["type"] == "Ahorros" else color
+        image = "💳" if row["account"] == "Tarjeta" else "🤑"
+        image = "📈" if row["type"] == "Ahorros" else image
+
+        amount = row["amount"] if row["type"] == "Ahorros" else abs(row["amount"])
+
+        st.markdown(
+            f"""
+            <div style="
+                border: 2px solid {color};
+                background-color: {color};
+                padding: 10px;
+                margin-bottom: 10px;
+                border-radius: 5px;
+                font-family: monospace;
+            ">
+                <div style="display: flex; justify-content: space-between;">
+                    <div style="width: 200px;">{row['date']}</div>
+                    <div style="width: 400px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{row['description']}</div>
+                    <div style="width: 150px;">{row['category']}</div>
+                    <div style="width: 100px; text-align: right;">{amount} €</div>
+                    <div style="display: flex; justify-content: flex-end;">{image}</div>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+
 def deploy_streamlit() -> None:
     """Deploy the Streamlit app to visualize transactions data."""
     if st.button("Refresh"):
@@ -457,7 +536,7 @@ def deploy_streamlit() -> None:
         dashboard(df)
 
     with tab2:
-        pass
+        list_transactions(df)
 
 
 ###############################################
