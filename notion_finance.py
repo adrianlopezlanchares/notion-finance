@@ -478,21 +478,30 @@ def dashboard(transactions: pd.DataFrame) -> None:
 
 
 def list_transactions(transactions: pd.DataFrame) -> None:
-    """List all transactions in a table format.
-
-    Args:
-        transactions (pd.DataFrame): The transactions data.
-    """
+    """List all transactions in a paginated table format."""
     st.subheader("Lista")
     transactions_list = transactions.copy()
 
     transactions_list["date"] = transactions_list["date"].dt.strftime("%d-%m-%Y")
+    transactions_list = transactions_list.iloc[::-1]  # Most recent first
 
-    transactions_list = transactions_list.iloc[::-1]
+    # Pagination config
+    items_per_page = 20
+    total_items = len(transactions_list)
+    total_pages = (total_items - 1) // items_per_page + 1
 
-    # st.dataframe(transactions_list, use_container_width=True)
+    page = st.number_input(
+        "Página", min_value=1, max_value=total_pages, value=1, step=1
+    )
 
-    for i, row in transactions_list.iterrows():
+    start_idx = (page - 1) * items_per_page
+    end_idx = start_idx + items_per_page
+
+    # Slice the DataFrame for the current page
+    current_page_data = transactions_list.iloc[start_idx:end_idx]
+
+    # Display each transaction
+    for _, row in current_page_data.iterrows():
         color = "#76C869" if row["type"] == "Income" else "#FA8970"
         color = "#6CA9F9" if row["type"] == "Ahorros" else color
         image = "💳" if row["account"] == "Tarjeta" else "🤑"
@@ -510,12 +519,12 @@ def list_transactions(transactions: pd.DataFrame) -> None:
                 border-radius: 5px;
                 font-family: monospace;
             ">
-                <div style="display: flex; justify-content: space-between;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div style="width: 200px;">{row['date']}</div>
                     <div style="width: 400px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{row['description']}</div>
                     <div style="width: 150px;">{row['category']}</div>
                     <div style="width: 100px; text-align: right;">{amount} €</div>
-                    <div style="display: flex; justify-content: flex-end;">{image}</div>
+                    <div>{image}</div>
                 </div>
             </div>
             """,
