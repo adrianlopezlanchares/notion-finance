@@ -524,7 +524,7 @@ def list_transactions(transactions: pd.DataFrame) -> None:
                     <div style="width: 400px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{row['description']}</div>
                     <div style="width: 150px;">{row['category']}</div>
                     <div style="width: 100px; text-align: right;">{amount} €</div>
-                    <div>{image}</div>
+                    <div style="width: 50px; text-align: right;">{image}</div>
                 </div>
             </div>
             """,
