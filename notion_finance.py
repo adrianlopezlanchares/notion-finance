@@ -16,15 +16,6 @@ notion = Client(auth=st.secrets["NOTION_API_KEY"])
 database_id = st.secrets["NOTION_DATABASE_ID"]
 
 
-# If we’re not already running under Streamlit, re-invoke ourselves with `streamlit run`
-if __name__ == "__main__" and os.getenv("STREAMLIT_RUN") != "1":
-    # mark that we are relaunching to avoid infinite loops
-    os.environ["STREAMLIT_RUN"] = "1"
-    # build the command: streamlit run this_script.py [any args]
-    cmd = ["streamlit", "run", sys.argv[0]] + sys.argv[1:]
-    sys.exit(subprocess.call(cmd))
-
-
 def get_transactions() -> pd.DataFrame:
     """Retrieve transaction details from Notion database."""
 
