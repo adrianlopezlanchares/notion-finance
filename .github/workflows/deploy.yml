@@ -29,11 +29,19 @@ jobs:
             # Pull the latest code
             if [ -d ~/notion-finance ]; then
               cd ~/notion-finance
+
+              # Debug
+              echo "Current directory: $(pwd)"
+              ls -la
               git fetch origin main
               git reset --hard origin/main
             else
               git clone https://github.com/adrianlopezlanchares/notion-finance.git ~/notion-finance
               cd ~/notion-finance
+
+              # Debug
+              echo "Current directory: $(pwd)"
+              ls -la
             fi
 
             # Rebuild and restart the Docker container
