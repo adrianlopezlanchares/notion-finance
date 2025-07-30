@@ -347,7 +347,7 @@ def dashboard(transactions: pd.DataFrame) -> None:
     current_money, current_tarjeta, current_efectivo, current_ahorros = (
         get_current_money(transactions)
     )
-    st.markdown("### <strong>Dinero Total</strong>", unsafe_allow_html=True)
+    st.markdown("### <strong>Dinerooooo Total</strong>", unsafe_allow_html=True)
     st.markdown(
         f"""
         <div style="
