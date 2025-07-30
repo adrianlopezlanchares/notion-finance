@@ -21,8 +21,8 @@ jobs:
             # 1) Ensure ~/.streamlit with your secrets exists
             mkdir -p ~/.streamlit
             cat > ~/.streamlit/secrets.toml <<EOF
-${{ secrets.STREAMLIT_SECRETS_TOML }}
-EOF
+            ${{ secrets.STREAMLIT_SECRETS_TOML }}
+            EOF
             chmod 700 ~/.streamlit
             chmod 600 ~/.streamlit/secrets.toml
 
