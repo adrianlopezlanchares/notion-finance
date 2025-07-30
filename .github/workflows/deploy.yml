@@ -1,0 +1,39 @@
+name: Deploy Notion Finance
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: SSH & Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}    # deploy
+          key:      ${{ secrets.SSH_PRIVATE_KEY }}
+          port:     22
+          script: |
+            # 1) Ensure ~/.streamlit with your secrets exists
+            mkdir -p ~/.streamlit
+            cat > ~/.streamlit/secrets.toml <<EOF
+            ${{ secrets.STREAMLIT_SECRETS_TOML }}
+            EOF
+            chmod 700 ~/.streamlit
+            chmod 600 ~/.streamlit/secrets.toml
+
+            # 2) Pull the latest code
+            if [ -d ~/notion-finance ]; then
+              cd ~/notion-finance
+              git fetch origin main
+              git reset --hard origin/main
+            else
+              git clone https://github.com/your-org/your-repo.git ~/notion-finance
+            fi
+
+            # 3) Restart your Streamlit service
+            sudo systemctl restart notion-finance
