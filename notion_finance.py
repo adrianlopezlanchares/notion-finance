@@ -539,5 +539,5 @@ def deploy_streamlit() -> None:
         list_transactions(df)
 
 
-###############################################
+#################################################
 deploy_streamlit()
