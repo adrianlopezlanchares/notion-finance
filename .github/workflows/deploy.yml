@@ -10,15 +10,15 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: SSH & Deploy
+      - name: SSH & Deploy with Docker
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.VM_HOST }}
-          username: ${{ secrets.VM_USER }}    # deploy
-          key:      ${{ secrets.SSH_PRIVATE_KEY }}
-          port:     22
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
           script: |
-            # 1) Ensure ~/.streamlit with your secrets exists
+            # Create streamlit secrets if necessary
             mkdir -p ~/.streamlit
             cat > ~/.streamlit/secrets.toml <<EOF
             ${{ secrets.STREAMLIT_SECRETS_TOML }}
@@ -26,14 +26,17 @@ jobs:
             chmod 700 ~/.streamlit
             chmod 600 ~/.streamlit/secrets.toml
 
-            # 2) Pull the latest code
+            # Pull the latest code
             if [ -d ~/notion-finance ]; then
               cd ~/notion-finance
               git fetch origin main
               git reset --hard origin/main
             else
-              git clone https://github.com/your-org/your-repo.git ~/notion-finance
+              git clone https://github.com/adrianlopezlanchares/notion-finance.git ~/notion-finance
+              cd ~/notion-finance
             fi
 
-            # 3) Restart your Streamlit service
-            sudo systemctl restart notion-finance
+            # Rebuild and restart the Docker container
+            cd ~/notion-finance
+            docker compose down
+            docker compose up --build -d

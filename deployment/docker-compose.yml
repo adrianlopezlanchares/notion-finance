@@ -1,0 +1,11 @@
+version: "3.9"
+
+services:
+  notion-finance:
+    build: .
+    container_name: notion-finance
+    ports:
+      - "8501:8501"
+    restart: always
+    volumes:
+      - ~/.streamlit:/root/.streamlit
