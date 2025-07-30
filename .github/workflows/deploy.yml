@@ -38,5 +38,5 @@ jobs:
 
             # Rebuild and restart the Docker container
             cd ~/notion-finance
-            docker compose down
-            docker compose up --build -d
+            docker compose -f deployment/docker-compose.yml down
+            docker compose -f deployment/docker-compose.yml up --build -d
