@@ -1,8 +1,8 @@
 from notion_client import Client
 import datetime
 import pandas as pd
-import matplotlib.pyplot as plt
-from matplotlib.figure import Figure
+import plotly.io as pio
+from plotly.graph_objects import Figure
 import streamlit as st
 
 import os
@@ -121,10 +121,9 @@ def plot_total_money(transactions: pd.DataFrame, time_range: str) -> Figure:
         time_range (str): Time range for the plot (e.g., "Último mes", "Última semana").
 
     Returns:
-        Figure: Matplotlib figure object.
+        Figure: Plotly figure object with the total money plot.
     """
 
-    fig, ax = plt.subplots()
     transactions = transactions.copy()
     transactions["amount_no_ahorros"] = transactions["amount"]
     transactions.loc[transactions["type"] == "Ahorros", "amount_no_ahorros"] = 0
@@ -144,17 +143,21 @@ def plot_total_money(transactions: pd.DataFrame, time_range: str) -> Figure:
             transactions_filtered["date"] >= start_date
         ]
 
-    ax.plot(
-        transactions_filtered["date"],
-        transactions_filtered["accumulated"],
-        marker="o",
-        markersize=1,
-        linestyle="-",
+    # Make the same plot with Plotly
+    fig = Figure()
+    fig.add_trace(
+        {
+            "x": transactions_filtered["date"],
+            "y": transactions_filtered["accumulated"],
+            "mode": "lines+markers",
+            "name": "Total Money",
+            "marker": {"size": 1},
+        }
     )
-    ax.set_xlabel("Date")
-    ax.set_ylabel("Euros (€)")
-    ax.set_title("Dinero Total")
-    fig.autofmt_xdate()
+
+    fig.update_layout(
+        margin=dict(t=0),
+    )
 
     return fig
 
@@ -170,7 +173,6 @@ def plot_ahorros(transactions: pd.DataFrame, time_range: str) -> Figure:
         Figure: Matplotlib figure object.
     """
 
-    fig, ax = plt.subplots()
     transactions = transactions.copy()
     transactions["amount_ahorros"] = transactions["amount"]
     transactions.loc[transactions["type"] != "Ahorros", "amount_ahorros"] = 0
@@ -190,17 +192,21 @@ def plot_ahorros(transactions: pd.DataFrame, time_range: str) -> Figure:
             transactions_filtered["date"] >= start_date
         ]
 
-    ax.plot(
-        transactions_filtered["date"],
-        transactions_filtered["accumulated_ahorros"],
-        marker="o",
-        markersize=1,
-        linestyle="-",
+    # Use plotly to create the figure
+    fig = Figure()
+    fig.add_trace(
+        {
+            "x": transactions_filtered["date"],
+            "y": transactions_filtered["accumulated_ahorros"],
+            "mode": "lines+markers",
+            "name": "Ahorros",
+            "marker": {"size": 1},
+        }
     )
-    ax.set_xlabel("Date")
-    ax.set_ylabel("Euros (€)")
-    ax.set_title("Ahorros")
-    fig.autofmt_xdate()
+
+    fig.update_layout(
+        margin=dict(t=0),
+    )
 
     return fig
 
@@ -242,28 +248,20 @@ def plot_category_pie(transactions: pd.DataFrame, transaction_type: str) -> Figu
         + " €)"
     )
 
-    cmap = plt.get_cmap("Pastel1")
-    base_colors = cmap.colors  # type: ignore
-    colors = [base_colors[i % len(base_colors)] for i in range(len(category_expenses))]
+    fig = Figure()
+    fig.add_trace(
+        {
+            "values": category_expenses["amount"],
+            "labels": category_expenses["general_category"],  # type: ignore
+            "type": "pie",
+            "textinfo": "label+percent",
+        }
+    )
 
-    fig, ax = plt.subplots()
-    ax.pie(
-        category_expenses["amount"],
-        labels=category_expenses["general_category"],  # type: ignore
-        startangle=90,
-        colors=colors,
+    fig.update_layout(
+        width=800,
+        height=600,
     )
-    ax.text(
-        0,
-        0,
-        f"{total_expenses:.2f} €",
-        ha="center",
-        va="center",
-        fontsize=12,
-        fontweight="bold",
-    )
-    ax.axis("equal")
-    fig.tight_layout()
 
     return fig
 
@@ -300,28 +298,15 @@ def plot_pie_expense_comer(transactions: pd.DataFrame, transaction_type: str) ->
         + " €)"
     )
 
-    cmap = plt.get_cmap("Pastel2")
-    base_colors = cmap.colors  # type: ignore
-    colors = [base_colors[i % len(base_colors)] for i in range(len(category_expenses))]
-
-    fig, ax = plt.subplots()
-    ax.pie(
-        category_expenses["amount"],
-        labels=category_expenses["category"],  # type: ignore
-        startangle=90,
-        colors=colors,
+    fig = Figure()
+    fig.add_trace(
+        {
+            "values": category_expenses["amount"],
+            "labels": category_expenses["category"],  # type: ignore
+            "type": "pie",
+            "textinfo": "label+percent",
+        }
     )
-    ax.text(
-        0,
-        0,
-        f"{total_expenses:.2f} €",
-        ha="center",
-        va="center",
-        fontsize=12,
-        fontweight="bold",
-    )
-    ax.axis("equal")
-    fig.tight_layout()
 
     return fig
 
@@ -416,10 +401,10 @@ def dashboard(transactions: pd.DataFrame) -> None:
     col1, col2 = st.columns(2)
     with col1:
         st.subheader("Dinero Total")
-        st.pyplot(fig_total)
+        st.plotly_chart(fig_total)
     with col2:
         st.subheader("Ahorros")
-        st.pyplot(fig_ahorros)
+        st.plotly_chart(fig_ahorros)
 
     if "selected_graph" not in st.session_state:
         st.session_state.selected_graph = "fig_pie"
@@ -451,21 +436,18 @@ def dashboard(transactions: pd.DataFrame) -> None:
         fig_pie = plot_category_pie(df_filtered, "Expense")
         fig_comer = plot_pie_expense_comer(df_filtered, "Expense")
 
-    col1, col2, col3 = st.columns(3)
+    col1, col2 = st.columns(2)
     with col1:
         st.button("Categorias", on_click=show_graph, args=("fig_pie",))
     with col2:
         st.button("Comer", on_click=show_graph, args=("fig_comer",))
-    with col3:
-        st.button("Ahorros", on_click=show_graph, args=("C",))
 
     graph_map = {
         "fig_pie": fig_pie,
         "fig_comer": fig_comer,
-        "C": fig_ahorros,
     }
 
-    st.pyplot(graph_map[st.session_state.selected_graph])
+    st.plotly_chart(graph_map[st.session_state.selected_graph])
 
 
 def list_transactions(transactions: pd.DataFrame) -> None:
@@ -514,7 +496,7 @@ def list_transactions(transactions: pd.DataFrame) -> None:
                     <div style="width: 200px;">{row['date']}</div>
                     <div style="width: 400px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{row['description']}</div>
                     <div style="width: 150px;">{row['category']}</div>
-                    <div style="width: 100px; text-align: right;">{amount} €</div>
+                    <div style="width: 100px; text-align: right;">{amount}€</div>
                     <div style="width: 50px; text-align: right;">{image}</div>
                 </div>
             </div>
