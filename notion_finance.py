@@ -473,8 +473,16 @@ def list_transactions(transactions: pd.DataFrame) -> None:
     # Slice the DataFrame for the current page
     current_page_data = transactions_list.iloc[start_idx:end_idx]
 
+    previous_date = (
+        current_page_data["date"].iloc[0] if not current_page_data.empty else None
+    )
+
     # Display each transaction
     for _, row in current_page_data.iterrows():
+        if row["date"] != previous_date:
+            st.markdown(f"---")
+            previous_date = row["date"]
+
         color = "#76C869" if row["type"] == "Income" else "#FA8970"
         color = "#6CA9F9" if row["type"] == "Ahorros" else color
         image = "💳" if row["account"] == "Tarjeta" else "🤑"
@@ -482,27 +490,36 @@ def list_transactions(transactions: pd.DataFrame) -> None:
 
         amount = row["amount"] if row["type"] == "Ahorros" else abs(row["amount"])
 
-        st.markdown(
-            f"""
-            <div style="
-                border: 2px solid {color};
-                background-color: {color};
-                padding: 10px;
-                margin-bottom: 10px;
-                border-radius: 5px;
-                font-family: monospace;
-            ">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <div style="width: 200px;">{row['date']}</div>
-                    <div style="width: 400px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{row['description']}</div>
-                    <div style="width: 150px;">{row['category']}</div>
-                    <div style="width: 100px; text-align: right;">{amount}€</div>
-                    <div style="width: 50px; text-align: right;">{image}</div>
+        col_main, col_pop = st.columns([9, 1])
+
+        with col_main:
+            st.markdown(
+                f"""
+                <div style="
+                    background-color: {color};
+                    color: white;
+                    padding: 16px;
+                    font-family: monospace;
+                    font-size: 18px;
+                    border-radius: 10px;
+                    margin-bottom: 10px;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                ">
+                    <span>{row['description']}</span>
+                    <span>{amount}€ {image}</span>
                 </div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
+                """,
+                unsafe_allow_html=True,
+            )
+        with col_pop:
+            with st.popover("➕", use_container_width=True):
+                st.markdown(f"### {row['description']}")
+                st.markdown(f"**Fecha:** {row['date']}")
+                st.markdown(f"**Categoría:** {row['category']}")
+                st.markdown(f"**Cantidad:** {amount}€")
+                st.markdown(f"**Cuenta:** {row['account']}")
 
 
 def deploy_streamlit() -> None:
