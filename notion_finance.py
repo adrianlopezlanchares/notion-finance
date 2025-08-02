@@ -59,6 +59,7 @@ def get_transactions() -> pd.DataFrame:
 
         rows.append(
             {
+                "page_id": page["id"],
                 "description": description,
                 "category": category,
                 "amount": amount,
@@ -450,6 +451,16 @@ def dashboard(transactions: pd.DataFrame) -> None:
     st.plotly_chart(graph_map[st.session_state.selected_graph])
 
 
+def delete_transaction(page_id: str) -> None:
+    """Delete a transaction from the Notion database.
+
+    Args:
+        page_id (str): The ID of the page to delete.
+    """
+    notion.pages.update(page_id, archived=True)
+    st.success("Transacción eliminada correctamente.")
+
+
 def list_transactions(transactions: pd.DataFrame) -> None:
     """List all transactions in a paginated table format."""
     st.subheader("Lista")
@@ -520,6 +531,9 @@ def list_transactions(transactions: pd.DataFrame) -> None:
                 st.markdown(f"**Categoría:** {row['category']}")
                 st.markdown(f"**Cantidad:** {amount}€")
                 st.markdown(f"**Cuenta:** {row['account']}")
+                if st.button("Eliminar", key=row["page_id"]):
+                    delete_transaction(row["page_id"])
+                    st.rerun()
 
 
 def deploy_streamlit() -> None:
