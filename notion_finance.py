@@ -455,7 +455,7 @@ def list_transactions(transactions: pd.DataFrame) -> None:
     st.subheader("Lista")
     transactions_list = transactions.copy()
 
-    transactions_list["date"] = transactions_list["date"].dt.strftime("%d-%m-%Y")
+    transactions_list["date"] = transactions_list["date"].dt.strftime("%d-%m-%Y %H:%M")
     transactions_list = transactions_list.iloc[::-1]  # Most recent first
 
     # Pagination config
@@ -474,14 +474,14 @@ def list_transactions(transactions: pd.DataFrame) -> None:
     current_page_data = transactions_list.iloc[start_idx:end_idx]
 
     previous_date = (
-        current_page_data["date"].iloc[0] if not current_page_data.empty else None
+        current_page_data["date"].iloc[0][:-6] if not current_page_data.empty else None
     )
 
     # Display each transaction
     for _, row in current_page_data.iterrows():
-        if row["date"] != previous_date:
+        if row["date"][:-6] != previous_date:
             st.markdown(f"---")
-            previous_date = row["date"]
+            previous_date = row["date"][:-6]
 
         color = "#76C869" if row["type"] == "Income" else "#FA8970"
         color = "#6CA9F9" if row["type"] == "Ahorros" else color
