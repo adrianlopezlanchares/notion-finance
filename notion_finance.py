@@ -153,6 +153,7 @@ def plot_total_money(transactions: pd.DataFrame, time_range: str) -> Figure:
             "mode": "lines+markers",
             "name": "Total Money",
             "marker": {"size": 1},
+            "line": {"shape": "hv"},
         }
     )
 
@@ -202,6 +203,7 @@ def plot_ahorros(transactions: pd.DataFrame, time_range: str) -> Figure:
             "mode": "lines+markers",
             "name": "Ahorros",
             "marker": {"size": 1},
+            "line": {"shape": "hv"},
         }
     )
 
