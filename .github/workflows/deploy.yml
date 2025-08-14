@@ -6,49 +6,24 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted   # Runs directly on your VPN server
     steps:
-      - uses: actions/checkout@v3
+      # 1. Pull the latest code from GitHub
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
+      # 2. Create Streamlit secrets file locally
       - name: Create Streamlit secrets
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.VM_HOST }}
-          username: ${{ secrets.VM_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
-          script: |
-            mkdir -p ~/.streamlit
-            cat > ~/.streamlit/secrets.toml <<EOF
-            ${{ secrets.STREAMLIT_SECRETS_TOML }}
-            EOF
-            chmod 700 ~/.streamlit
-            chmod 600 ~/.streamlit/secrets.toml
+        run: |
+          mkdir -p ~/.streamlit
+          cat > ~/.streamlit/secrets.toml <<EOF
+          ${{ secrets.STREAMLIT_SECRETS_TOML }}
+          EOF
+          chmod 700 ~/.streamlit
+          chmod 600 ~/.streamlit/secrets.toml
 
-      - name: Pull latest code
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.VM_HOST }}
-          username: ${{ secrets.VM_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
-          script: |
-            if [ -d ~/notion-finance ]; then
-              cd ~/notion-finance
-              git fetch origin main
-              git reset --hard origin/main
-            else
-              git clone https://github.com/adrianlopezlanchares/notion-finance.git ~/notion-finance
-            fi
-
+      # 3. Rebuild and restart Docker containers locally
       - name: Rebuild and restart Docker containers
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.VM_HOST }}
-          username: ${{ secrets.VM_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
-          script: |
-            cd ~/notion-finance
-            docker compose -f deployment/docker-compose.yml down
-            docker compose -f deployment/docker-compose.yml up --build -d
+        run: |
+          docker compose -f deployment/docker-compose.yml down
+          docker compose -f deployment/docker-compose.yml up --build -d
